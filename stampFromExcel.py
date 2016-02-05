@@ -3,6 +3,7 @@ import pythoncom
 pythoncom.CoInitialize()
 import win32com
 import win32com.client
+import PyPDF2
 
 
 totalSDs = int((input('How many shop drawings are being reviewed? ')))
@@ -91,8 +92,38 @@ def stampWriter(numList):
                 wb.save(sheetPath + '.xlsx')
                 
                 xlsxToPdf(sheetPath)
+                
+                
+def transmittalWriter(numList):
+    
+    pdfFileObj = open(r'C:\Users\wbartos\Documents\Pyscripts\Stamp\transmittal\test.pdf')
+    pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+    
+    
+    log = openpyxl.load_workbook(r'C:\Users\wbartos\Documents\Pyscripts\Stamp\ShopDrawingLog.xlsx')
+    logSheet = log.get_sheet_by_name('Log')
+    
+    wb = openpyxl.load_workbook(r'C:\Users\wbartos\Documents\Pyscripts\Stamp\transmittal\transmittal.xlsx')
+    sheet = wb.get_sheet_by_name('Sheet1')
+        
+    for logrow in range(11, logSheet.get_highest_row()+1):
+        
+        if str(logSheet['A' + str(i)].value) in numList:  
+            for transrow in range(11, transmittal.get_highest_row() +1):
+                sheet['B4'].value = logSheet['A3'].value
+                sheet['B5'].value = logSheet['A4'].value
+                sheet['B6'].value = logSheet['A5'].value
+                sheet['B'+str(transrow)].value = logSheet['A' + str(logrow)].value
+                sheet['C'+str(transrow)].value = pdfReader.numPages
+                sheet['E'+str(transrow)].value = logSheet['C' + str(logrow)].value
+                sheet['D'+str(transrow)].value = logSheet['F' + str(logrow)].value
+            wb.save(r'C:\Users\wbartos\Documents\Pyscripts\Stamp\transmittal\transmittal1.xlsx')
+        
+    
             
             
+transmittalWriter(numList)
+    
 
-stampWriter(numList)
+
     
