@@ -7,15 +7,27 @@ import PyPDF2
 
 
 
-shopDict = {'Log':(r'/Users/Will/Code/TestFolder/ShopDrawingLog(1).xlsx'),
+shopDict = {'Project':'153',
+            'Log':(r'/Users/Will/Code/TestFolder/ShopDrawingLog(1).xlsx'),
             'Stamp':(r'/Users/Will/Code/TestFolder/stamp.xlsx'),
             'Out': (r'/Users/Will/Code/TestFolder/OUT') }
+            
+shopDict2 = {'Project':'143',
+'Log':(r'/Users/Will/Code/TestFolder/ShopDrawingLog(1).xlsx'),
+'Stamp':(r'/Users/Will/Code/TestFolder/stamp.xlsx'),
+'Out': (r'/Users/Will/Code/TestFolder/OUT') }
 
-stampDict = {'NET':('sheet[\'B2\'].value = \'X\''),
-            'ET':('sheet[\'B3\'].value = \'X\''),
-            'E&C':('sheet[\'B4\'].value = \'X\''),
-            'R&R':('sheet[\'B6\'].value = \'X\''),
-            'REJ':('sheet[\'B7\'].value = \'X\'')}
+topDict = {shopDict['Project']:shopDict, shopDict2['Project']:shopDict2};
+
+print(topDict['143']);
+            
+topDict.push(shopDict.key, shopDict);
+
+stampDict = {'NET':('B2'),
+            'ET':('B3'),
+            'E&C':('B4'),
+            'R&R':('B5'),
+            'REJ':('B6')}
 
 totalSDs = int((input('How many shop drawings are being reviewed? ')))
 print(totalSDs)
@@ -57,11 +69,7 @@ def pdfMerger(stamp,submittal, path):
     
     finally:
         stampFile.close()
-        
-    
-    
-
-    
+            
     
 def stampWriter(numList):
  
@@ -72,12 +80,12 @@ def stampWriter(numList):
         
         if str(logSheet['A' + str(i)].value) in numList:
             
-            if logSheet['F' + str(i)].value == 'NET':
+            if logSheet['F' + str(i)].value in stampDict:
                 
                 wb = openpyxl.load_workbook(shopDict['Stamp'])
                 sheet = wb.get_sheet_by_name('Stamp')
                 sheet['B1'].value = logSheet['C' + str(i)].value
-                sheet['B2'].value = 'X'
+                sheet[stampDict[logSheet['F' + str(i)].value]].value = 'X'
                 sheetPath = (shopDict['Out'] + '/newstamp' + str(i))
                 submittalPath = logSheet['K'+str(i)].value
                 wb.save(sheetPath + '.xlsx')
@@ -85,59 +93,7 @@ def stampWriter(numList):
                 #xlsxToPdf(sheetPath)
                 #pdfMerger(xlsxToPdf(sheetPath),submittalPath,shopDict['Out'])
                 
-            elif logSheet['F' + str(i)].value == 'ET':
-                
-                wb = openpyxl.load_workbook(shopDict['Stamp'])
-                sheet = wb.get_sheet_by_name('Stamp')
-                sheet['B1'].value = logSheet['C' + str(i)].value
-                sheet['B3'].value = 'X'
-                sheetPath = (shopDict['Out'] + '/newstamp' + str(i))
-                submittalPath = logSheet['K'+str(i)].value
-                wb.save(sheetPath + '.xlsx')
-                
-                #xlsxToPdf(sheetPath)
-                #pdfMerger(xlsxToPdf(sheetPath),submittalPath)
-                
-            elif logSheet['F' + str(i)].value == 'E&C':
-                
-                wb = openpyxl.load_workbook(shopDict['Stamp'])
-                sheet = wb.get_sheet_by_name('Stamp')
-                sheet['B1'].value = logSheet['C' + str(i)].value
-                sheet['B4'].value = 'X'
-                sheetPath = (shopDict['Out'] + '/newstamp' + str(i))
-                submittalPath = logSheet['K'+str(i)].value
-                wb.save(sheetPath + '.xlsx')
-                
-                #xlsxToPdf(sheetPath)
-                pdfMerger(xlsxToPdf(sheetPath),submittalPath)
-                
-            elif logSheet['F' + str(i)].value == 'R&R':
-                
-                wb = openpyxl.load_workbook(shopDict['Stamp'])
-                sheet = wb.get_sheet_by_name('Stamp')
-                sheet['B1'].value = logSheet['C' + str(i)].value
-                sheet['B6'].value = 'X'
-                sheetPath = (shopDict['Out'] + '/newstamp' + str(i))
-                submittalPath = logSheet['K'+str(i)].value
-                wb.save(sheetPath + '.xlsx')
-                
-                #xlsxToPdf(sheetPath)
-                #pdfMerger(xlsxToPdf(sheetPath),submittalPath)
-                
-            elif logSheet['F' + str(i)].value == 'REJ':
-                
-                wb = openpyxl.load_workbook(shopDict['Stamp'])
-                sheet = wb.get_sheet_by_name('Stamp')
-                sheet['B1'].value = logSheet['C' + str(i)].value
-                sheet['B7'].value = 'X'
-                sheetPath = (shopDict['Out'] + '/newstamp' + str(i))
-                submittalPath = logSheet['K'+str(i)].value
-                wb.save(sheetPath + '.xlsx')
-                
-                #xlsxToPdf(sheetPath)
-                #pdfMerger(xlsxToPdf(sheetPath),submittalPath)
-                
-                
+
 def transmittalWriter(numList):
     
     wbpath = (r'C:\Users\William\PythonScripts\stamps\transmittal\transmittal')
@@ -146,7 +102,7 @@ def transmittalWriter(numList):
     pdfFileObj = open(r'C:\Users\William\PythonScripts\stamps\transmittal\test.pdf', 'rb')
     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
     
-    log = openpyxl.load_workbook(r'C:\Users\William\PythonScripts\stamps\ShopDrawingLog.xlsx')
+    log = openpyxl.load_workbook(shopDict['Log'])
     logSheet = log.get_sheet_by_name('Log')
     
     wb = openpyxl.load_workbook(r'C:\Users\William\PythonScripts\stamps\transmittal\transmittal.xlsx')
