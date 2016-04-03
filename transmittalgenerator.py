@@ -127,8 +127,8 @@ def addHeader(path):
         
  
        
-input('PRESS ENTER TO EXIT')    
-            
+input('PRESS ENTER TO EXIT')   
+
  
 transmittalWriter(numList)
 
