@@ -53,8 +53,10 @@ def stampWriter(numList):
                 wb.save(sheetPath + '.xlsx')
      
                 pdfMerger(xlsxToPdf(sheetPath),submittalPath,transmittalPath)
-                
-            addHeader(transmittalPath)
+                addHeader(transmittalPath, str(i))
+                os.remove(transmittalPath)
+                os.remove(sheetPath + '.pdf')
+                os.remove(sheetPath + '.xlsx')
                 
 
 def xlsxToPdf(path):
@@ -83,12 +85,13 @@ def pdfMerger(stamp,submittal, path):
         stampFile.close()
         submittalFile.close()
         
-def addHeader(path):
+def addHeader(path, sdNo):
     
     pdfNoHeader = open(path, 'rb') #opens the generated PDF(from xlsxToPdf)
     pdfReader = PyPDF2.PdfFileReader(pdfNoHeader) #creates an object out of the NoHeader PDF
     firstPage = pdfReader.getPage(0) #grabs the first page 
-    pdfHeaderReader = PyPDF2.PdfFileReader(open('watermark3.pdf', 'rb')) #opens the header template
+    pdfHeader= open('watermark3.pdf', 'rb')
+    pdfHeaderReader = PyPDF2.PdfFileReader(pdfHeader) #opens the header template
     firstPage.mergePage(pdfHeaderReader.getPage(0)) #merges the first page of the NoHeader PDF with the header template
     pdfWriter = PyPDF2.PdfFileWriter() #creates a new PDF
     pdfWriter.addPage(firstPage) #adds the watermarked page to the first page of the new PDF
@@ -98,9 +101,11 @@ def addHeader(path):
            pdfWriter.addPage(pageObj) #adds each page of the no header PDF to the new PDF
            
 
-    resultPdfFile = open(shopDict['Out'] + 'finishedStamp' + numList[i] + '.pdf', 'wb') #FINISHED PDF
+    resultPdfFile = open(shopDict['Out'] + '\\finishedStamp' + sdNo + '.pdf', 'wb') #FINISHED PDF
     pdfWriter.write(resultPdfFile)
+    print(resultPdfFile)
     pdfNoHeader.close()
+    pdfHeader.close()
         
  
        
