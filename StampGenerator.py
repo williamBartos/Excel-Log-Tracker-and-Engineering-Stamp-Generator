@@ -1,3 +1,16 @@
+#WRITTEN BY WILLIAM BARTOS IN PYTHON 3.5#
+
+
+
+#THESE PACKAGES ARE NECESSARY FOR PYINSTALLER TO CONVERT TO .EXE
+import six 
+import packaging
+import packaging.version
+import packaging.specifiers
+import packaging.requirements
+
+
+import re
 import openpyxl
 import pythoncom
 pythoncom.CoInitialize()
@@ -5,6 +18,15 @@ import win32com
 import win32com.client
 import PyPDF2
 import os
+import warnings
+import logging
+import colorama
+from colorama import init, Fore, Back, Style
+
+init()
+warnings.filterwarnings('ignore')
+
+
 
 
 shopDict = {'Project':'171',
@@ -23,15 +45,45 @@ stampDict = {'NET':('B13'),
             'REJ':('B18')
             }
 
-totalSDs = int((input('How many shop drawings are being reviewed? ')))
 
+
+while True:
+
+    userInput = (input('How many shop drawings are being reviewed? '))
+    totalSDs = 0
+    
+    if userInput == '':
+          print(Fore.RED + Style.BRIGHT + '\n No empty inputs please')
+          print(Style.RESET_ALL)
+     
+    elif re.match(r"^[0-9]*$", userInput):
+         totalSDs=userInput
+         break
+     
+    else: 
+          print(Fore.RED + Style.BRIGHT + '\n Please only enter numbers or letters')
+          print(Style.RESET_ALL)
+
+sdCount =1
 numList = []
 
-
-for i in range((totalSDs)):
-     drawingNums = (input('Enter the Shop Drawing Number: '))
-     numList.append(drawingNums)
-
+while sdCount <= ((int(totalSDs))):
+     drawingNums = (input('\nEnter the Shop Drawing Number: '))
+     
+     if drawingNums == '':
+          print(Fore.RED + Style.BRIGHT + '\nNo empty inputs please')
+          print(Style.RESET_ALL)
+     
+     elif re.match(r"^[A-Za-z0-9]*$", drawingNums):
+         numList.append(drawingNums)
+         print(Fore.CYAN + Style.BRIGHT + '\n' + '%d of ' %(sdCount) + str(totalSDs) +' entered')
+         print(Style.RESET_ALL)
+         sdCount +=1
+     
+     else: 
+          print(Fore.RED + Style.BRIGHT + '\nPlease only enter numbers or letters')
+          print(Style.RESET_ALL)
+       
                  
 def stampWriter(numList):
     
@@ -41,7 +93,6 @@ def stampWriter(numList):
     for i in range(11, logSheet.get_highest_row()+1):               
         if str(logSheet['A' + str(i)].value) in numList:
             if logSheet['F' + str(i)].value in stampDict:
-    
                 wb = openpyxl.load_workbook(shopDict['Stamp'])
                 sheet = wb.get_sheet_by_name('Sheet1')
                 sheet['B10'].value = logSheet['C' + str(i)].value
@@ -49,7 +100,9 @@ def stampWriter(numList):
                 sheetPath = (shopDict['Out'] + '\\newstamp' + str(i))
                 transmittalPath = (shopDict['Out'] +'\\testout' + str(i) + '.pdf')
                 submittalPath = logSheet['K'+str(i)].value
-                print('Generated')
+                
+                print(Fore.CYAN + Style.BRIGHT +'\nGenerated Successfully')
+                print(Style.RESET_ALL)
         
                 wb.save(sheetPath + '.xlsx')
      
@@ -110,11 +163,13 @@ def addHeader(path, sdNo, sdTitle):
         
  
        
-input('PRESS ENTER TO EXIT')    
-
-
-            
+      
 stampWriter(numList)   
+
+
+print(Fore.MAGENTA + Style.BRIGHT + '\n' + 'PRESS ENTER TO EXIT')
+print(Style.RESET_ALL)    
+input()  
 
 
 
