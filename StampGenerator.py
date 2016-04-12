@@ -31,18 +31,19 @@ warnings.filterwarnings('ignore')
 
 shopDict = {'Project':'171',
             'Log':(r'ShopDrawingLog.xlsx'),
-            'Stamp':(r'Stamp2.xlsx'),
+            'Stamp':(r'./Templates/Stamp.xlsx'),
             'Out': (os.path.abspath('OUT')),
             'In': (os.path.abspath('IN')),
-            'Transmittal': (r'transmittal')
+            'Transmittal': (r'./Templates/transmittal.xlsx'),
+            'Header':(r'./Templates/header.pdf')
             }
             
             
-stampDict = {'NET':('B13'),
-            'ET':('B14'),
-            'E&C':('B15'),
-            'R&R':('B17'),
-            'REJ':('B18')
+stampDict = {'NET':('B12'),
+            'ET':('B13'),
+            'E&C':('B14'),
+            'R&R':('B16'),
+            'REJ':('B17')
             }
 
 
@@ -93,21 +94,24 @@ def stampWriter(numList):
     for i in range(11, logSheet.get_highest_row()+1):               
         if str(logSheet['A' + str(i)].value) in numList:
             if logSheet['F' + str(i)].value in stampDict:
+                sdTitle = logSheet['C' + str(i)].value
+                wb = openpyxl.load_workbook(shopDict['Stamp'])
+                sdNo = str(logSheet['A' + str(i)].value)
+                sdTitle = logSheet['C' + str(i)].value
                 wb = openpyxl.load_workbook(shopDict['Stamp'])
                 sheet = wb.get_sheet_by_name('Sheet1')
-                sheet['B10'].value = logSheet['C' + str(i)].value
+                sheet['B9'].value = 'SD# ' + sdNo + ' - ' + sdTitle
+                sheet['B29'].value = logSheet['I' + str(i)].value
                 sheet[stampDict[logSheet['F' + str(i)].value]].value = '✓'
                 sheetPath = (shopDict['Out'] + '\\newstamp' + str(i))
                 transmittalPath = (shopDict['Out'] +'\\testout' + str(i) + '.pdf')
                 submittalPath = logSheet['K'+str(i)].value
                 
-                print(Fore.CYAN + Style.BRIGHT +'\nGenerated Successfully')
-                print(Style.RESET_ALL)
         
                 wb.save(sheetPath + '.xlsx')
      
                 pdfMerger(xlsxToPdf(sheetPath),submittalPath,transmittalPath)
-                addHeader(transmittalPath, logSheet['A' + str(i)].value, logSheet['C' + str(i)].value )
+                addHeader(transmittalPath, sdNo,sdTitle )
                 os.remove(transmittalPath)
                 os.remove(sheetPath + '.pdf')
                 os.remove(sheetPath + '.xlsx')
@@ -144,7 +148,7 @@ def addHeader(path, sdNo, sdTitle):
     pdfNoHeader = open(path, 'rb') #opens the generated PDF(from xlsxToPdf)
     pdfReader = PyPDF2.PdfFileReader(pdfNoHeader) #creates an object out of the NoHeader PDF
     firstPage = pdfReader.getPage(0) #grabs the first page 
-    pdfHeader= open('header.pdf', 'rb')
+    pdfHeader= open(shopDict['Header'], 'rb')
     pdfHeaderReader = PyPDF2.PdfFileReader(pdfHeader) #opens the header template
     firstPage.mergePage(pdfHeaderReader.getPage(0)) #merges the first page of the NoHeader PDF with the header template
     pdfWriter = PyPDF2.PdfFileWriter() #creates a new PDF
@@ -160,6 +164,9 @@ def addHeader(path, sdNo, sdTitle):
     print(resultPdfFile)
     pdfNoHeader.close()
     pdfHeader.close()
+    
+    print(Fore.CYAN + Style.BRIGHT +'\nStamp %s of %s generated' %(sdNo, totalSDs))
+    print(Style.RESET_ALL)
         
  
        
