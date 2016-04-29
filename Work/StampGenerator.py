@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 
 entryArray=[]
 inputArray=[]
+
     
 def addEntry():
      
@@ -21,16 +22,24 @@ def addEntry():
                 nextLabel = Label(entryContainer, text='SD#')
                 nextLabel.grid(row=newRow, column=3)
                 nextEntry.grid(row=newRow, column=4, padx=5, pady=5)
-                entryArray.append(nextEntry)          
+                entryArray.append(nextEntry) 
                 
-def entryToArray():
+                
+def entryToArray(): 
+    
+    for i in range(len(inputArray)):
+        inputArray[i]=''
+        
     for entry in range(len(entryArray)):
         val = str(entryArray[entry].get()).lower()
-        inputArray.append(val)
+        inputArray.append(val)    
+       
+
+        
 
 master = tk.Tk()
 master.wm_iconbitmap(r'./Templates/ICON.ico')
-master.title('Shop Drawing Stamp and Transmittal Generator, written by William Bartos')
+master.title('Shop Drawing Stamp and Transmittal Generator, by William Bartos')
 master.geometry('600x480')
 master.resizable(width=FALSE, height=FALSE)
 
@@ -75,8 +84,8 @@ entryArray.extend((e1,e2,e3, e4))
 entryButtonContainer=Frame(height=50, width=200)
 entryButtonContainer.pack(padx=200, pady=10, fill=BOTH)
 
-bl1= Button(entryButtonContainer, text='Add More Entries', command=addEntry)
-bl2= Button(entryButtonContainer, text='Apply', command=entryToArray)
+bl1= Button(entryButtonContainer, text='Add More Entries', command= addEntry)
+bl2= Button(entryButtonContainer, text='Apply', command= entryToArray)
 bl1.pack()
 bl2.pack(pady=10)
 
@@ -91,6 +100,8 @@ b2.place(in_=buttonContainer, relx=.75, rely=.5, anchor='center')
 
 tk.mainloop()
 
+
+       
 
 
 

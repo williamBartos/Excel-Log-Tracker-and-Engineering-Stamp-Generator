@@ -168,6 +168,5 @@ def addHeader(path):
 
 
 
-transmittalWriter(numList)
 
     
