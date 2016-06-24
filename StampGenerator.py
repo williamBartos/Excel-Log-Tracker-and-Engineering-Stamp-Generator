@@ -1,182 +1,95 @@
-#WRITTEN BY WILLIAM BARTOS IN PYTHON 3.5#
+import tkinter as tk
+from tkinter import *
+import StampGeneratorGUI
+import transmittalgeneratorGUI
+from PIL import Image, ImageTk
 
 
-
-#THESE PACKAGES ARE NECESSARY FOR PYINSTALLER TO CONVERT TO .EXE
-import six 
-import packaging
-import packaging.version
-import packaging.specifiers
-import packaging.requirements
-
-
-import re
-import openpyxl
-import pythoncom
-pythoncom.CoInitialize()
-import win32com
-import win32com.client
-import PyPDF2
-import os
-import warnings
-import logging
-import colorama
-from colorama import init, Fore, Back, Style
-
-init()
-warnings.filterwarnings('ignore')
-
-
-
-
-shopDict = {'Project':'171',
-            'Log':(r'ShopDrawingLog.xlsx'),
-            'Stamp':(r'./Templates/Stamp.xlsx'),
-            'Out': (os.path.abspath('OUT')),
-            'In': (os.path.abspath('IN')),
-            'Transmittal': (r'./Templates/transmittal.xlsx'),
-            'Header':(r'./Templates/header.pdf')
-            }
-            
-            
-stampDict = {'NET':('B12'),
-            'ET':('B13'),
-            'E&C':('B14'),
-            'R&R':('B16'),
-            'REJ':('B17')
-            }
-
-
-
-while True:
-
-    userInput = (input('How many shop drawings are being reviewed? '))
-    totalSDs = 0
+entryArray=[]
+inputArray=[]
     
-    if userInput == '':
-          print(Fore.RED + Style.BRIGHT + '\n No empty inputs please')
-          print(Style.RESET_ALL)
+def addEntry():
      
-    elif re.match(r"^[0-9]*$", userInput):
-         totalSDs=userInput
-         break
-     
-    else: 
-          print(Fore.RED + Style.BRIGHT + '\n Please only enter numbers or letters')
-          print(Style.RESET_ALL)
-
-sdCount =1
-numList = []
-
-while sdCount <= ((int(totalSDs))):
-     drawingNums = (input('\nEnter the Shop Drawing Number: '))
-     
-     if drawingNums == '':
-          print(Fore.RED + Style.BRIGHT + '\nNo empty inputs please')
-          print(Style.RESET_ALL)
-     
-     elif re.match(r"^[A-Za-z0-9]*$", drawingNums):
-         numList.append(drawingNums)
-         print(Fore.CYAN + Style.BRIGHT + '\n' + '%d of ' %(sdCount) + str(totalSDs) +' entered')
-         print(Style.RESET_ALL)
-         sdCount +=1
-     
-     else: 
-          print(Fore.RED + Style.BRIGHT + '\nPlease only enter numbers or letters')
-          print(Style.RESET_ALL)
-       
-                 
-def stampWriter(numList):
-    
-    log = openpyxl.load_workbook(shopDict['Log'])
-    logSheet = log.get_sheet_by_name('Log')
-    
-    for i in range(11, logSheet.get_highest_row()+1):               
-        if str(logSheet['A' + str(i)].value) in numList:
-            if logSheet['F' + str(i)].value in stampDict:
-                sdTitle = logSheet['C' + str(i)].value
-                wb = openpyxl.load_workbook(shopDict['Stamp'])
-                sdNo = str(logSheet['A' + str(i)].value)
-                sdTitle = logSheet['C' + str(i)].value
-                wb = openpyxl.load_workbook(shopDict['Stamp'])
-                sheet = wb.get_sheet_by_name('Sheet1')
-                sheet['B9'].value = 'SD# ' + sdNo + ' - ' + sdTitle
-                sheet['B29'].value = logSheet['I' + str(i)].value
-                sheet[stampDict[logSheet['F' + str(i)].value]].value = '✓'
-                sheetPath = (shopDict['Out'] + '\\newstamp' + str(i))
-                transmittalPath = (shopDict['Out'] +'\\testout' + str(i) + '.pdf')
-                submittalPath = logSheet['K'+str(i)].value
+        nextRow= len(entryArray) 
+        
+        if len(entryArray) >=9:
+                return
+        else: 
+            if nextRow >= 4:
+                newRow = len(entryArray)%4 + 1    
+                nextEntry =  Entry(entryContainer, width=5)
+                nextLabel = Label(entryContainer, text='SD#')
+                nextLabel.grid(row=newRow, column=3)
+                nextEntry.grid(row=newRow, column=4, padx=5, pady=5)
+                entryArray.append(nextEntry)          
                 
-        
-                wb.save(sheetPath + '.xlsx')
-     
-                pdfMerger(xlsxToPdf(sheetPath),submittalPath,transmittalPath)
-                addHeader(transmittalPath, sdNo,sdTitle )
-                os.remove(transmittalPath)
-                os.remove(sheetPath + '.pdf')
-                os.remove(sheetPath + '.xlsx')
-                
+def entryToArray():
+    for entry in range(len(entryArray)):
+        val = str(entryArray[entry].get()).lower()
+        inputArray.append(val)
 
-def xlsxToPdf(path):
-    xlApp = win32com.client.Dispatch("Excel.Application")
-    books = xlApp.Workbooks.Open(path + '.xlsx')
-    ws = books.Worksheets[0]
-    ws.Visible = 1
-    ws.ExportAsFixedFormat(0, path + '.pdf')
-    stampPdf = path + '.pdf'
-    books.Close(True)
-    return stampPdf
-     
+master = tk.Tk()
+master.wm_iconbitmap(r'./Templates/ICON.ico')
+master.title('Shop Drawing Stamp and Transmittal Generator, by William Bartos')
+master.geometry('600x480')
+master.resizable(width=FALSE, height=FALSE)
 
-def pdfMerger(stamp,submittal, path):
-    
-    stampFile = open(stamp, 'rb')
-    submittalFile = open(submittal,'rb')  
-    merger = PyPDF2.PdfFileMerger()
-    
-    try:
-        merger.merge(position = 0, fileobj = stampFile) 
-        merger.merge(position = 2, fileobj = submittalFile)
-        merger.write(open(path, 'wb'))
+backgroundImg =Image.open(r'./Templates/ICON.gif')
+photo = ImageTk.PhotoImage(backgroundImg)
+label=Label(image=photo)
+label.image= photo
+label.place(in_=master)
 
-    finally:
-        stampFile.close()
-        submittalFile.close()
-        
-def addHeader(path, sdNo, sdTitle):
-    
-    pdfNoHeader = open(path, 'rb') #opens the generated PDF(from xlsxToPdf)
-    pdfReader = PyPDF2.PdfFileReader(pdfNoHeader) #creates an object out of the NoHeader PDF
-    firstPage = pdfReader.getPage(0) #grabs the first page 
-    pdfHeader= open(shopDict['Header'], 'rb')
-    pdfHeaderReader = PyPDF2.PdfFileReader(pdfHeader) #opens the header template
-    firstPage.mergePage(pdfHeaderReader.getPage(0)) #merges the first page of the NoHeader PDF with the header template
-    pdfWriter = PyPDF2.PdfFileWriter() #creates a new PDF
-    pdfWriter.addPage(firstPage) #adds the watermarked page to the first page of the new PDF
-    
-    for pageNum in range(1, pdfReader.numPages):
-           pageObj = pdfReader.getPage(pageNum) #gets each page from the no header PDF
-           pdfWriter.addPage(pageObj) #adds each page of the no header PDF to the new PDF
-           
+ml1=Label(master, text= 'Shop Drawing Stamp and Transmittal Generator' + '\n' + 'v1.0')
+ml1.pack(padx = 10, pady=40)
 
-    resultPdfFile = open(shopDict['Out'] + '\\SD#' + str(sdNo) + '_' + str(sdTitle) + '.pdf', 'wb') #FINISHED PDF
-    pdfWriter.write(resultPdfFile)
-    print(resultPdfFile)
-    pdfNoHeader.close()
-    pdfHeader.close()
-    
-    print(Fore.CYAN + Style.BRIGHT +'\nStamp %s of %s generated' %(sdNo, totalSDs))
-    print(Style.RESET_ALL)
-        
- 
-       
-      
-stampWriter(numList)   
+entryContainer = Frame(height = 110, width = 150)
+entryContainer.pack(padx=100, pady=0, fill=BOTH)
+entryContainer.grid_rowconfigure(0, weight=1)
+entryContainer.grid_rowconfigure(4, weight=1)
+entryContainer.grid_columnconfigure(0, weight=1)
+entryContainer.grid_columnconfigure(6, weight=1)
 
+el1=Label(entryContainer, text= 'SD#')
+el2=Label(entryContainer, text= 'SD#')
+el3=Label(entryContainer, text= 'SD#')
+el4=Label(entryContainer, text= 'SD#')
 
-print(Fore.MAGENTA + Style.BRIGHT + '\n' + 'PRESS ENTER TO EXIT')
-print(Style.RESET_ALL)    
-input()  
+el1.grid(row=1, column=1)
+el2.grid(row=2, column=1)
+el3.grid(row=3, column=1)
+el4.grid(row=4, column=1)
+
+e1 = Entry(entryContainer, width=5)
+e2 = Entry(entryContainer, width=5)
+e3 = Entry(entryContainer, width=5)
+e4 = Entry(entryContainer, width=5)
+
+e1.grid(row=1, column=2, padx=5, pady=5)
+e2.grid(row=2, column=2, padx=5, pady=5)
+e3.grid(row=3, column=2, padx=5, pady=5)
+e4.grid(row=4, column=2, padx=5, pady=5)
+
+entryArray.extend((e1,e2,e3, e4))
+
+entryButtonContainer=Frame(height=50, width=200)
+entryButtonContainer.pack(padx=200, pady=10, fill=BOTH)
+
+bl1= Button(entryButtonContainer, text='Add More Entries', command=addEntry)
+bl2= Button(entryButtonContainer, text='Apply', command=entryToArray)
+bl1.pack()
+bl2.pack(pady=10)
+
+buttonContainer = Frame(height = 100, width = 150)
+buttonContainer.pack(side=BOTTOM, padx=10, pady=0, fill=BOTH)
+
+b1 = tk.Button(buttonContainer, text='Generate Stamps', command= lambda: StampGeneratorGUI.stampWriter(inputArray),height = 2, width = 3, padx=50)
+b2 = tk.Button(buttonContainer, text='Generate Transmittal', command= lambda: transmittalgeneratorGUI.transmittalWriter(inputArray), height = 2, width = 3, padx=50)
+
+b1.place(in_=buttonContainer, relx=.25, rely=.5, anchor='center')
+b2.place(in_=buttonContainer, relx=.75, rely=.5, anchor='center')
+
+tk.mainloop()
 
 
 
@@ -184,5 +97,3 @@ input()
 
 
 
-
-    

@@ -43,7 +43,7 @@ stampDict = {
             }
 
             
-
+numList=[]
 
 
 def transmittalWriter(numList):
@@ -73,13 +73,13 @@ def transmittalWriter(numList):
             pdfFileObj = open(logSheet['K'+str(logrow)].value, 'rb')
             pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
             
-            sheet['F13'].value = logSheet['A3'].value #Project Name
-            sheet['F14'].value = logSheet['A4'].value #Client Name
-            sheet['I11'].value = logSheet['A5'].value #MC Project No.
+            sheet['E13'].value = logSheet['A3'].value #Project Name
+            sheet['E14'].value = logSheet['A4'].value #Client Name
+            sheet['G11'].value = logSheet['A5'].value #MC Project No.
             sheet['A'+str(currentRow)].value = str(logSheet['A' + str(logrow)].value) #SD NO. 
-            sheet['C'+str(currentRow)].value = pdfReader.numPages #TOTAL PAGES 
-            sheet['D'+str(currentRow)].value = str(logSheet['C' + str(logrow)].value) #DESCRIPTION
-            sheet['I'+str(currentRow)].value = str(logSheet['F' + str(logrow)].value) #STATUS
+            sheet['B'+str(currentRow)].value = pdfReader.numPages #TOTAL PAGES 
+            sheet['C'+str(currentRow)].value = str(logSheet['C' + str(logrow)].value) #DESCRIPTION
+            sheet['H'+str(currentRow)].value = str(logSheet['F' + str(logrow)].value) #STATUS
             
             sheet['A'+str(currentRow)].border = thinBorder
             sheet['B'+str(currentRow)].border = thinBorder
@@ -89,9 +89,9 @@ def transmittalWriter(numList):
             sheet['F'+str(currentRow)].border = thinBorder
             sheet['G'+str(currentRow)].border = thinBorder
             sheet['H'+str(currentRow)].border = thinBorder
-            sheet['I'+str(currentRow)].border = thinBorder
-            sheet['J'+str(currentRow)].border = thinBorder
-             
+            #sheet['I'+str(currentRow)].border = thinBorder
+            #sheet['J'+str(currentRow)].border = thinBorder
+            
             sheet['A'+str(headerRow)].border = thinBorder
             sheet['B'+str(headerRow)].border = thinBorder
             sheet['C'+str(headerRow)].border = thinBorder
@@ -100,8 +100,8 @@ def transmittalWriter(numList):
             sheet['F'+str(headerRow)].border = thinBorder
             sheet['G'+str(headerRow)].border = thinBorder
             sheet['H'+str(headerRow)].border = thinBorder
-            sheet['I'+str(headerRow)].border = thinBorder
-            sheet['J'+str(headerRow)].border = thinBorder
+            #sheet['I'+str(headerRow)].border = thinBorder
+            #sheet['J'+str(headerRow)].border = thinBorder
             
             
             
@@ -164,8 +164,6 @@ def addHeader(path):
     pdfNoHeader.close()
     pdfHeader.close()
     
-
-
 
 
 
