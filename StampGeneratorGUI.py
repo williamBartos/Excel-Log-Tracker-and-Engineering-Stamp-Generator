@@ -57,10 +57,12 @@ def stampWriter(numList):
                 wb = openpyxl.load_workbook(shopDict['Stamp'])
                 sdNo = str(logSheet['A' + str(i)].value)
                 sdTitle = logSheet['C' + str(i)].value
+                sdTitle = sdTitle.replace("\\" , "-")
+                sdTitle = sdTitle.replace("/" , "-")
                 wb = openpyxl.load_workbook(shopDict['Stamp'])
                 sheet = wb.get_sheet_by_name('Sheet1')
                 sheet['B9'].value = 'SD# ' + sdNo + ' - ' + sdTitle
-                sheet['B29'].value = logSheet['I' + str(i)].value
+                sheet['A29'].value = logSheet['I' + str(i)].value
                 sheet[stampDict[logSheet['F' + str(i)].value]].value = '✓'
                 sheetPath = (shopDict['Out'] + '\\newstamp' + str(i))
                 transmittalPath = (shopDict['Out'] +'\\testout' + str(i) + '.pdf')
