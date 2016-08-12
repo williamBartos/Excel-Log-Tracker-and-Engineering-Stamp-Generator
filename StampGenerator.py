@@ -40,7 +40,7 @@ label=Label(image=photo)
 label.image= photo
 label.place(in_=master)
 
-ml1=Label(master, text= 'Shop Drawing Stamp and Transmittal Generator' + '\n' + 'v1.0')
+ml1=Label(master, text= 'Shop Drawing Stamp and Transmittal Generator' + '\n' + 'v1.1')
 ml1.pack(padx = 10, pady=40)
 
 entryContainer = Frame(height = 110, width = 150)

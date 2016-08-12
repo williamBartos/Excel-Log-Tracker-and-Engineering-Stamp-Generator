@@ -33,11 +33,11 @@ shopDict = {'Project':'171',
             }
             
             
-stampDict = {'NET':('B12'),
-            'ET':('B13'),
-            'E&C':('B14'),
-            'R&R':('B16'),
-            'REJ':('B17')
+stampDict = {'NET':('A12'),
+            'ET':('A13'),
+            'E&C':('A14'),
+            'R&R':('A16'),
+            'REJ':('A17')
             }
 
 
@@ -68,12 +68,27 @@ def stampWriter(numList):
                 
         
                 wb.save(sheetPath + '.xlsx')
+                
+                try:
      
-                pdfMerger(xlsxToPdf(sheetPath),submittalPath,transmittalPath)
-                addHeader(transmittalPath, sdNo,sdTitle )
-                os.remove(transmittalPath)
-                os.remove(sheetPath + '.pdf')
-                os.remove(sheetPath + '.xlsx')
+                    pdfMerger(xlsxToPdf(sheetPath),submittalPath,transmittalPath)
+                    addHeader(transmittalPath, sdNo,sdTitle )
+                    os.remove(transmittalPath)
+                    os.remove(sheetPath + '.xlsx')
+                    os.remove(sheetPath + '.pdf')
+                    
+                except:
+                    xlsxToPdf(sheetPath)
+                    addHeader(sheetPath + '.pdf', sdNo,sdTitle )
+                    os.remove(sheetPath + '.xlsx')
+                    os.remove(sheetPath + '.pdf')
+                    
+                    
+                         
+
+                    
+           
+           
                 
 
 def xlsxToPdf(path):
@@ -90,7 +105,12 @@ def xlsxToPdf(path):
 def pdfMerger(stamp,submittal, path):
     
     stampFile = open(stamp, 'rb')
-    submittalFile = open(submittal,'rb')  
+    
+    try:
+        submittalFile = open(submittal,'rb')
+    except:
+        return
+      
     merger = PyPDF2.PdfFileMerger()
     
     try:
