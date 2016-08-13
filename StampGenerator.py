@@ -6,7 +6,9 @@ from PIL import Image, ImageTk
 
 
 entryArray=[]
-inputArray=[]
+inputArray=[]    
+
+
     
 def addEntry():
      
@@ -21,12 +23,36 @@ def addEntry():
                 nextLabel = Label(entryContainer, text='SD#')
                 nextLabel.grid(row=newRow, column=3)
                 nextEntry.grid(row=newRow, column=4, padx=5, pady=5)
-                entryArray.append(nextEntry)          
+                entryArray.append(nextEntry)     
+
+
+def clearEntries():
+      for entry in range(len(entryArray)):
+          val = entryArray[entry]
+          val.delete(0,END)
+      inputArray[::] = ''
+   
                 
 def entryToArray():
+     
     for entry in range(len(entryArray)):
         val = str(entryArray[entry].get()).lower()
-        inputArray.append(val)
+        if val not in inputArray and val != '':
+            inputArray.append(val)
+    
+def genStamp(inputs):
+    entryToArray()
+    StampGeneratorGUI.stampWriter(inputs)
+    clearEntries()
+    
+    
+
+def genTrans(inputs):
+    entryToArray()
+    transmittalgeneratorGUI.transmittalWriter(inputs)
+    clearEntries()
+      
+
 
 master = tk.Tk()
 master.wm_iconbitmap(r'./Templates/ICON.ico')
@@ -76,19 +102,23 @@ entryButtonContainer=Frame(height=50, width=200)
 entryButtonContainer.pack(padx=200, pady=10, fill=BOTH)
 
 bl1= Button(entryButtonContainer, text='Add More Entries', command=addEntry)
-bl2= Button(entryButtonContainer, text='Apply', command=entryToArray)
+#bl2= Button(entryButtonContainer, text='Apply', command=entryToArray)
+
 bl1.pack()
-bl2.pack(pady=10)
+#bl2.pack(pady=10)
+
 
 buttonContainer = Frame(height = 100, width = 150)
 buttonContainer.pack(side=BOTTOM, padx=10, pady=0, fill=BOTH)
 
-b1 = tk.Button(buttonContainer, text='Generate Stamps', command= lambda: StampGeneratorGUI.stampWriter(inputArray),height = 2, width = 3, padx=50)
-b2 = tk.Button(buttonContainer, text='Generate Transmittal', command= lambda: transmittalgeneratorGUI.transmittalWriter(inputArray), height = 2, width = 3, padx=50)
+
+b1 = tk.Button(buttonContainer, text='Generate Stamps', command= lambda:genStamp(inputArray),height = 2, width = 3, padx=50)
+b2 = tk.Button(buttonContainer, text='Generate Transmittal', command= lambda:genTrans(inputArray) , height = 2, width = 3, padx=50)
 
 b1.place(in_=buttonContainer, relx=.25, rely=.5, anchor='center')
 b2.place(in_=buttonContainer, relx=.75, rely=.5, anchor='center')
 
+print(inputArray)
 tk.mainloop()
 
 
