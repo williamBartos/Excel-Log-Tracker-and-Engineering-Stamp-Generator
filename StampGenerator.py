@@ -31,10 +31,8 @@ def clearEntries():
           val = entryArray[entry]
           val.delete(0,END)
       inputArray[::] = ''
-   
                 
 def entryToArray():
-     
     for entry in range(len(entryArray)):
         val = str(entryArray[entry].get()).lower()
         if val not in inputArray and val != '':
@@ -53,7 +51,6 @@ def genTrans(inputs):
     clearEntries()
       
 
-
 master = tk.Tk()
 master.wm_iconbitmap(r'./Templates/ICON.ico')
 master.title('Shop Drawing Stamp and Transmittal Generator, by William Bartos')
@@ -66,10 +63,10 @@ label=Label(image=photo)
 label.image= photo
 label.place(in_=master)
 
-ml1=Label(master, text= 'Shop Drawing Stamp and Transmittal Generator' + '\n' + 'v1.1')
+ml1=Label(master, text= 'Shop Drawing Stamp and Transmittal Generator' + '\n' + 'v1.11')
 ml1.pack(padx = 10, pady=40)
 
-entryContainer = Frame(height = 110, width = 150)
+entryContainer = Frame(height = 210, width = 250)
 entryContainer.pack(padx=100, pady=0, fill=BOTH)
 entryContainer.grid_rowconfigure(0, weight=1)
 entryContainer.grid_rowconfigure(4, weight=1)
@@ -112,8 +109,8 @@ buttonContainer = Frame(height = 100, width = 150)
 buttonContainer.pack(side=BOTTOM, padx=10, pady=0, fill=BOTH)
 
 
-b1 = tk.Button(buttonContainer, text='Generate Stamps', command= lambda:genStamp(inputArray),height = 2, width = 3, padx=50)
-b2 = tk.Button(buttonContainer, text='Generate Transmittal', command= lambda:genTrans(inputArray) , height = 2, width = 3, padx=50)
+b1 = tk.Button(buttonContainer, text='Generate Stamps', command= lambda:genStamp(inputArray),height = 3, width = 4, padx=50)
+b2 = tk.Button(buttonContainer, text='Generate Transmittal', command= lambda:genTrans(inputArray) , height = 3, width = 4, padx=50)
 
 b1.place(in_=buttonContainer, relx=.25, rely=.5, anchor='center')
 b2.place(in_=buttonContainer, relx=.75, rely=.5, anchor='center')
