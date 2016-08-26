@@ -61,37 +61,18 @@ def transmittalWriter(numList):
     wb = openpyxl.load_workbook(wbpath)
     sheet = wb.get_sheet_by_name('Sheet1')
         
-    currentRow = 29 #STARTING ROW FOR SUBMITTAL TABLE
+    currentRow = 28 #STARTING ROW FOR SUBMITTAL TABLE
     headerRow = currentRow - 1
 
     def copyValues(currentRow):
         
-        sheet['E13'].value = logSheet['A3'].value #Project Name
-        sheet['E14'].value = logSheet['A4'].value #Client Name
-        sheet['G11'].value = logSheet['A5'].value #MC Project No.
+        sheet['F13'].value = logSheet['A3'].value #Project Name
+        sheet['F14'].value = logSheet['A4'].value #Client Name
+        sheet['H11'].value = logSheet['A5'].value #MC Project No.
         sheet['A'+str(currentRow)].value = str(logSheet['A' + str(logrow)].value) #SD NO. 
         sheet['C'+str(currentRow)].value = str(logSheet['C' + str(logrow)].value) #DESCRIPTION
-        sheet['H'+str(currentRow)].value = str(logSheet['F' + str(logrow)].value) #STATUS
-        
-        sheet['A'+str(currentRow)].border = thinBorder
-        sheet['B'+str(currentRow)].border = thinBorder
-        sheet['C'+str(currentRow)].border = thinBorder
-        sheet['D'+str(currentRow)].border = thinBorder
-        sheet['E'+str(currentRow)].border = thinBorder
-        sheet['F'+str(currentRow)].border = thinBorder
-        sheet['G'+str(currentRow)].border = thinBorder
-        sheet['H'+str(currentRow)].border = thinBorder
-    
-        sheet['A'+str(headerRow)].border = thinBorder
-        sheet['B'+str(headerRow)].border = thinBorder
-        sheet['C'+str(headerRow)].border = thinBorder
-        sheet['D'+str(headerRow)].border = thinBorder
-        sheet['E'+str(headerRow)].border = thinBorder
-        sheet['F'+str(headerRow)].border = thinBorder
-        sheet['G'+str(headerRow)].border = thinBorder
-        sheet['H'+str(headerRow)].border = thinBorder
-
-    
+        sheet['J'+str(currentRow)].value = str(logSheet['F' + str(logrow)].value) #STATUS
+  
       
     for logrow in range(11, logSheet.get_highest_row()+1):
         if str(logSheet['A' + str(logrow)].value) in numList:
@@ -99,17 +80,16 @@ def transmittalWriter(numList):
                 pdfFileObj = open(logSheet['K'+str(logrow)].value, 'rb')
                 pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
                 copyValues(currentRow)
-                
+                sheet['B'+str(currentRow)].value = pdfReader.numPages #TOTAL PAGES 
+               
+         
             except:
                 copyValues(currentRow)
-                currentRow+= 1
-                 
-                try:
-                    sheet['B'+str(currentRow)].value = pdfReader.numPages #TOTAL PAGES 
-                except:
-                    continue
-                       
+                
         currentRow+= 1
+
+                       
+     
                 
     try:
         newTransmittal = ((shopDict['Out'] + '\\Transmittal'))
