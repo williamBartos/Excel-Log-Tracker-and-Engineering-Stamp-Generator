@@ -50,47 +50,50 @@ def stampWriter(numList):
     log = openpyxl.load_workbook(shopDict['Log'])
     logSheet = log.get_sheet_by_name('Log')
     
-    for i in range(11, logSheet.get_highest_row()+1):               
-        if str(logSheet['A' + str(i)].value).lower() in numList:
-            if logSheet['F' + str(i)].value in stampDict:
-                sdTitle = logSheet['C' + str(i)].value
-                wb = openpyxl.load_workbook(shopDict['Stamp'])
-                sdNo = str(logSheet['A' + str(i)].value)
-                sdTitle = logSheet['C' + str(i)].value
-                sdTitle = sdTitle.replace("\\" , "-")
-                sdTitle = sdTitle.replace("/" , "-")
-                wb = openpyxl.load_workbook(shopDict['Stamp'])
-                sheet = wb.get_sheet_by_name('Sheet1')
-                sheet['B9'].value = 'SD# ' + sdNo + ' - ' + sdTitle
-                sheet['A29'].value = logSheet['I' + str(i)].value
-                sheet[stampDict[logSheet['F' + str(i)].value]].value = '✓'
-                sheetPath = (shopDict['Out'] + '\\newstamp' + str(i))
-                transmittalPath = (shopDict['Out'] +'\\testout' + str(i) + '.pdf')
-                submittalPath = logSheet['K'+str(i)].value
-                
+    for i in range(11, logSheet.get_highest_row()+1):   
         
-                wb.save(sheetPath + '.xlsx')
-                
-                try:
-     
-                    pdfMerger(xlsxToPdf(sheetPath),submittalPath,transmittalPath)
-                    addHeader(transmittalPath, sdNo,sdTitle )
-                    os.remove(transmittalPath)
-                    os.remove(sheetPath + '.xlsx')
-                    os.remove(sheetPath + '.pdf')
+        try:             
+            if str(logSheet['A' + str(i)].value).lower() in numList:
+                if logSheet['F' + str(i)].value in stampDict:
+                    sdTitle = logSheet['C' + str(i)].value
+                    wb = openpyxl.load_workbook(shopDict['Stamp'])
+                    sdNo = str(logSheet['A' + str(i)].value)
+                    sdTitle = logSheet['C' + str(i)].value
                     
-                except:
-                    xlsxToPdf(sheetPath)
-                    addHeader(sheetPath + '.pdf', sdNo,sdTitle )
-                    os.remove(sheetPath + '.xlsx')
-                    os.remove(sheetPath + '.pdf')
+                    sdTitle = re.sub('[^\w\-_\. ]', '-', sdTitle)
+                    #sdTitle = sdTitle.replace("\\" , "-")
+                    #sdTitle = sdTitle.replace("/" , "-")
                     
+                    wb = openpyxl.load_workbook(shopDict['Stamp'])
+                    sheet = wb.get_sheet_by_name('Sheet1')
+                    sheet['B9'].value = 'SD# ' + sdNo + ' - ' + sdTitle
+                    sheet['A29'].value = logSheet['I' + str(i)].value
+                    sheet[stampDict[logSheet['F' + str(i)].value]].value = '✓'
+                    sheetPath = (shopDict['Out'] + '\\newstamp' + str(i))
+                    transmittalPath = (shopDict['Out'] +'\\testout' + str(i) + '.pdf')
+                    submittalPath = logSheet['K'+str(i)].value
                     
-                         
-
+            
+                    wb.save(sheetPath + '.xlsx')
+                        
+                    try:
+             
+                        pdfMerger(xlsxToPdf(sheetPath),submittalPath,transmittalPath)
+                        addHeader(transmittalPath, sdNo,sdTitle )
+                        os.remove(transmittalPath)
+                        os.remove(sheetPath + '.xlsx')
+                        os.remove(sheetPath + '.pdf')
                     
-           
-           
+                    except:
+                        xlsxToPdf(sheetPath)
+                        addHeader(sheetPath + '.pdf', sdNo,sdTitle )
+                        os.remove(sheetPath + '.xlsx')
+                        os.remove(sheetPath + '.pdf')
+            
+                    
+        except:
+            continue
+                    
                 
 
 def xlsxToPdf(path):
