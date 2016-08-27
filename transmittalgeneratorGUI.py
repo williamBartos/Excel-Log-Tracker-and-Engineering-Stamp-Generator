@@ -62,7 +62,7 @@ def transmittalWriter(numList):
     sheet = wb.get_sheet_by_name('Sheet1')
         
     currentRow = 28 #STARTING ROW FOR SUBMITTAL TABLE
-    headerRow = currentRow - 1
+
 
     def copyValues(currentRow):
         
@@ -81,12 +81,14 @@ def transmittalWriter(numList):
                 pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
                 copyValues(currentRow)
                 sheet['B'+str(currentRow)].value = pdfReader.numPages #TOTAL PAGES 
+                currentRow+= 1
                
          
             except:
                 copyValues(currentRow)
+                currentRow+= 1
                 
-        currentRow+= 1
+      
 
                        
      
