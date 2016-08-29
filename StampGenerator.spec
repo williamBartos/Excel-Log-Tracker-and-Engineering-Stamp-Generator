@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['StampGenerator.py'],
-             pathex=['C:\\Code\\Test Env'],
+             pathex=['R:\\Municipal\\Utility\\Working\\01_General\\Programs\\Python\\Stamp & Transmittal Generator\\Test Environment'],
              binaries=None,
              datas=None,
              hiddenimports=[],

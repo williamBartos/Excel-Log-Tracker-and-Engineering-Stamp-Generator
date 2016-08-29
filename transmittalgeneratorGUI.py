@@ -151,12 +151,27 @@ def addHeader(path):
            pageObj = pdfReader.getPage(pageNum) #gets each page from the no header PDF
            pdfWriter.addPage(pageObj) #adds each page of the no header PDF to the new PDF
            
+    try:
+        n=0
+        
+        if os.path.isfile((shopDict['Out'] + '\\Transmittal_' + now.strftime("%Y-%m-%d") +'-' + '%s' + '.pdf') % n) == False:  
+            resultPdfFile = open((shopDict['Out'] + '\\Transmittal_' + now.strftime("%Y-%m-%d") +'-' + '%s' + '.pdf') % n, 'wb' ) #FINISHED PDF
 
-    resultPdfFile = open(shopDict['Out'] + '\\Transmittal_' + now.strftime("%Y-%m-%d") + '.pdf', 'wb') #FINISHED PDF
-    pdfWriter.write(resultPdfFile)
-    pdfNoHeader.close()
-    pdfHeader.close()
-    
+        
+        else:
+            while(os.path.isfile((shopDict['Out'] + '\\Transmittal_' + now.strftime("%Y-%m-%d") +'-' + '%s' + '.pdf') % n)):
+                n+=1
+                print(n)
+            resultPdfFile = open((shopDict['Out'] + '\\Transmittal_' + now.strftime("%Y-%m-%d") +'-' + '%s' + '.pdf') % n, 'wb' ) #FINISHED PDF 
+            
+        pdfWriter.write(resultPdfFile)
+        pdfNoHeader.close()
+        pdfHeader.close()
+            
+    except:
+        pdfNoHeader.close()
+        pdfHeader.close()
+        pass
 
 
 
