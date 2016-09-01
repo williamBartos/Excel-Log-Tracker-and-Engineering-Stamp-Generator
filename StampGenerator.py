@@ -115,7 +115,7 @@ b2 = tk.Button(buttonContainer, text='Generate Transmittal', command= lambda:gen
 b1.place(in_=buttonContainer, relx=.25, rely=.5, anchor='center')
 b2.place(in_=buttonContainer, relx=.75, rely=.5, anchor='center')
 
-print(inputArray)
+
 tk.mainloop()
 
 

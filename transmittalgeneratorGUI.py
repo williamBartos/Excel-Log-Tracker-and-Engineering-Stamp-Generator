@@ -29,7 +29,7 @@ shopDict = {
             'Stamp':(r'./Templates/Stamp.xlsx'),
             'Out': (os.path.abspath('OUT')),
             'In': (os.path.abspath('IN')),
-            'Transmittal': ('.\\Templates\\transmittal1'),
+            'Transmittal': ('.\\Templates\\transmittal2'),
             'Header':(r'./Templates/header.pdf')
             }
             
@@ -66,12 +66,12 @@ def transmittalWriter(numList):
 
     def copyValues(currentRow):
         
-        sheet['F13'].value = logSheet['A3'].value #Project Name
-        sheet['F14'].value = logSheet['A4'].value #Client Name
-        sheet['H11'].value = logSheet['A5'].value #MC Project No.
+        sheet['G13'].value = logSheet['A3'].value #Project Name
+        sheet['G14'].value = logSheet['A4'].value #Client Name
+        sheet['J11'].value = logSheet['A5'].value #MC Project No.
         sheet['A'+str(currentRow)].value = str(logSheet['A' + str(logrow)].value) #SD NO. 
         sheet['C'+str(currentRow)].value = str(logSheet['C' + str(logrow)].value) #DESCRIPTION
-        sheet['J'+str(currentRow)].value = str(logSheet['F' + str(logrow)].value) #STATUS
+        sheet['K'+str(currentRow)].value = str(logSheet['F' + str(logrow)].value.upper()) #STATUS
   
       
     for logrow in range(11, logSheet.get_highest_row()+1):
@@ -86,12 +86,7 @@ def transmittalWriter(numList):
          
             except:
                 copyValues(currentRow)
-                currentRow+= 1
-                
-      
-
-                       
-     
+                currentRow+= 1                
                 
     try:
         newTransmittal = ((shopDict['Out'] + '\\Transmittal'))
@@ -107,8 +102,6 @@ def transmittalWriter(numList):
         os.remove(newTransmittal)
         os.remove(newTransmittal + '.pdf')
                 
-
-
 
 def xlsxToPdf(path):
     xlApp = win32com.client.Dispatch("Excel.Application")
@@ -156,12 +149,10 @@ def addHeader(path):
         
         if os.path.isfile((shopDict['Out'] + '\\Transmittal_' + now.strftime("%Y-%m-%d") +'-' + '%s' + '.pdf') % n) == False:  
             resultPdfFile = open((shopDict['Out'] + '\\Transmittal_' + now.strftime("%Y-%m-%d") +'-' + '%s' + '.pdf') % n, 'wb' ) #FINISHED PDF
-
         
         else:
             while(os.path.isfile((shopDict['Out'] + '\\Transmittal_' + now.strftime("%Y-%m-%d") +'-' + '%s' + '.pdf') % n)):
                 n+=1
-                print(n)
             resultPdfFile = open((shopDict['Out'] + '\\Transmittal_' + now.strftime("%Y-%m-%d") +'-' + '%s' + '.pdf') % n, 'wb' ) #FINISHED PDF 
             
         pdfWriter.write(resultPdfFile)

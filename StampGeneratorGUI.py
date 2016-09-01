@@ -41,10 +41,7 @@ stampDict = {'NET':('A12'),
             }
 
 
-
-
-
-                 
+                
 def stampWriter(numList):
     
     log = openpyxl.load_workbook(shopDict['Log'])
@@ -54,7 +51,7 @@ def stampWriter(numList):
         
         try:             
             if str(logSheet['A' + str(i)].value).lower() in numList:
-                if logSheet['F' + str(i)].value in stampDict:
+                if str(logSheet['F' + str(i)].value).upper() in stampDict:
                     sdTitle = logSheet['C' + str(i)].value
                     wb = openpyxl.load_workbook(shopDict['Stamp'])
                     sdNo = str(logSheet['A' + str(i)].value)
@@ -68,7 +65,7 @@ def stampWriter(numList):
                     sheet = wb.get_sheet_by_name('Sheet1')
                     sheet['B9'].value = 'SD# ' + sdNo + ' - ' + sdTitle
                     sheet['A29'].value = logSheet['I' + str(i)].value
-                    sheet[stampDict[logSheet['F' + str(i)].value]].value = '✓'
+                    sheet[stampDict[(logSheet['F' + str(i)].value).upper()]].value = '✓'
                     sheetPath = (shopDict['Out'] + '\\newstamp' + str(i))
                     transmittalPath = (shopDict['Out'] +'\\testout' + str(i) + '.pdf')
                     submittalPath = logSheet['K'+str(i)].value
